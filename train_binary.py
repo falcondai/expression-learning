@@ -34,7 +34,6 @@ class CarryCell(tf.nn.rnn_cell.RNNCell):
         return 2
 
 
-
 def main():
     np.random.seed(123)
     tf.set_random_seed(1234)
@@ -109,8 +108,13 @@ def main():
         restore_vars(saver, sess, checkpoint_dir)
         writer = tf.train.SummaryWriter('tf-log/%s-%d' % (sys.argv[3], time.time()), sess.graph)
 
-        # o, s = encoder([[0., 1., 0., 1.]], [[0.]], scope='encoder')
-        # print o.eval(), s.eval()
+        # test the model with all possible inputs
+        with tf.variable_scope('encoder', reuse=True):
+            for a in [[0., 1.], [1., 0.]]:
+                for b in [[0., 1.], [1., 0.]]:
+                    for c in [[0.], [1.]]:
+                        o, s = encoder([a + b], [c])
+                        print a, b, c, o.eval(), s.eval()
 
         step = 0
         batch = []
